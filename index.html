@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f7f2">
+  <meta name="description" content="A friendly, interactive guide to Markdown syntax and the essentials you'll use every day.">
+  <title>Markdown, remembered</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f7f7f2;
+      --ink: #20251f;
+      --muted: #70766f;
+      --line: #e5e7df;
+      --green: #2f684c;
+      --green-dark: #214c37;
+      --green-pale: #e8f0e8;
+      --yellow: #f2c96d;
+      --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      --serif: Georgia, "Times New Roman", serif;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      scroll-behavior: smooth;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    a { color: inherit; }
+    button, textarea { font: inherit; }
+    button { cursor: pointer; }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+      padding: 0 max(5vw, 24px);
+      border-bottom: 1px solid var(--line);
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 750; letter-spacing: -.04em; }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      color: white;
+      background: var(--green);
+      font-family: var(--mono);
+      font-size: 15px;
+    }
+    .topbar nav { display: flex; gap: 28px; font-size: 13px; }
+    .topbar nav a { text-decoration: none; color: var(--muted); }
+    .topbar nav a:hover { color: var(--green); }
+    .top-note { color: var(--muted); font-size: 12px; }
+
+    main { max-width: 1160px; margin: 0 auto; padding: 0 28px; }
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      align-items: center;
+      gap: 60px;
+      padding: 88px 0 76px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      color: var(--green);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before { width: 22px; height: 1px; background: currentColor; content: ""; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 {
+      max-width: 620px;
+      margin-bottom: 20px;
+      font-family: var(--serif);
+      font-size: clamp(52px, 7vw, 82px);
+      font-weight: 400;
+      letter-spacing: -.065em;
+      line-height: .99;
+    }
+    h1 em { color: var(--green); font-weight: 400; }
+    .hero-copy { max-width: 495px; color: var(--muted); font-size: 16px; line-height: 1.75; }
+    .hero-actions { display: flex; align-items: center; gap: 20px; margin-top: 28px; }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 46px;
+      padding: 0 18px;
+      border: 1px solid var(--green);
+      border-radius: 7px;
+      color: white;
+      background: var(--green);
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background .2s, transform .2s;
+    }
+    .button:hover { background: var(--green-dark); transform: translateY(-1px); }
+    .text-link { color: var(--muted); font-size: 13px; text-decoration: none; }
+    .text-link:hover { color: var(--green); }
+    .hero-card {
+      position: relative;
+      padding: 25px;
+      border: 1px solid #dce5d9;
+      border-radius: 13px;
+      background: #edf2e9;
+      transform: rotate(1.5deg);
+    }
+    .hero-card::before {
+      position: absolute;
+      z-index: -1;
+      inset: 9px -9px -9px 9px;
+      border: 1px solid #dce5d9;
+      border-radius: 13px;
+      content: "";
+    }
+    .card-label { margin-bottom: 20px; color: var(--muted); font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: .1em; }
+    .hero-card pre { margin: 0; font: 14px/2 var(--mono); white-space: pre-wrap; }
+    .hero-card .hash { color: var(--green); }
+    .hero-card .strong { font-weight: 800; }
+    .hero-card .dim { color: #8b9288; }
+
+    .rule { height: 1px; background: var(--line); }
+    .lesson-layout { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 78px; padding: 68px 0 88px; }
+    .sidebar { align-self: start; position: sticky; top: 28px; }
+    .sidebar-title { margin-bottom: 15px; color: #999e96; font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .sidebar a {
+      display: block;
+      padding: 9px 11px;
+      border-left: 2px solid transparent;
+      color: var(--muted);
+      font-size: 13px;
+      text-decoration: none;
+    }
+    .sidebar a:hover, .sidebar a.active { border-left-color: var(--green); color: var(--green-dark); }
+    .content { min-width: 0; }
+    .section-heading { margin-bottom: 32px; }
+    .section-kicker { margin-bottom: 9px; color: var(--green); font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    h2 { margin-bottom: 10px; font-family: var(--serif); font-size: 40px; font-weight: 400; letter-spacing: -.045em; }
+    .section-heading p { max-width: 580px; margin-bottom: 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
+    .lesson {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      margin-bottom: 13px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .lesson-info { padding: 20px 22px; }
+    .lesson-title { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+    .lesson-title h3 { margin: 0; font-size: 14px; font-weight: 750; }
+    .lesson-num { color: #a4aaa0; font-family: var(--mono); font-size: 10px; }
+    .lesson-info p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+    .example { display: grid; grid-template-columns: 1fr 1fr; border-left: 1px solid var(--line); background: #fbfbf9; }
+    .example > div { min-width: 0; padding: 15px 16px; }
+    .example > div + div { border-left: 1px solid var(--line); background: #fff; }
+    .example-label { margin-bottom: 9px; color: #a0a69c; font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+    code, .code-sample { font-family: var(--mono); }
+    .code-sample { color: #4c564c; font-size: 11px; line-height: 1.8; overflow-wrap: anywhere; }
+    .rendered { color: var(--ink); font-size: 12px; line-height: 1.7; }
+    .rendered strong { font-weight: 750; }
+    .rendered em { color: var(--green); }
+    .rendered h4 { margin: 0; font-size: 17px; }
+    .rendered ul { margin: 0; padding-left: 17px; }
+    .rendered blockquote { margin: 0; padding-left: 10px; border-left: 2px solid var(--yellow); color: var(--muted); }
+    .rendered pre { margin: 0; padding: 7px; border-radius: 4px; background: #f2f3ee; font: 10px/1.5 var(--mono); }
+    .rendered a { color: var(--green); text-decoration: underline; }
+    .rendered hr { border: 0; border-top: 1px solid var(--line); }
+
+    .playground {
+      margin: 20px 0 82px;
+      padding: 27px;
+      border-radius: 12px;
+      color: #f5f6f1;
+      background: #202b24;
+    }
+    .playground-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 22px; }
+    .playground h2 { margin: 0 0 6px; font-size: 30px; }
+    .playground-head p { margin: 0; color: #aeb9af; font-size: 12px; }
+    .playground .section-kicker { color: #a4c6a9; }
+    .reset-button { padding: 7px 11px; border: 1px solid #58665b; border-radius: 5px; color: #dbe4db; background: transparent; font-size: 11px; }
+    .reset-button:hover { background: #334239; }
+    .playground-grid { display: grid; grid-template-columns: 1fr 1fr; min-height: 245px; border: 1px solid #445148; border-radius: 7px; overflow: hidden; }
+    .editor-wrap, .preview-wrap { display: flex; flex-direction: column; min-width: 0; }
+    .editor-wrap { border-right: 1px solid #445148; }
+    .pane-label { padding: 11px 14px; border-bottom: 1px solid #445148; color: #aeb9af; font-size: 10px; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
+    #markdown-input {
+      flex: 1;
+      width: 100%;
+      min-height: 205px;
+      resize: vertical;
+      padding: 15px;
+      border: 0;
+      outline: 0;
+      color: #e5eadf;
+      background: #26332b;
+      font: 12px/1.8 var(--mono);
+    }
+    #markdown-input:focus { box-shadow: inset 0 0 0 1px #7ba582; }
+    #preview { flex: 1; padding: 15px; color: #222920; background: #fafbf7; font-size: 13px; line-height: 1.65; overflow-wrap: anywhere; }
+    #preview h1, #preview h2, #preview h3 { margin: .2em 0 .5em; font-family: var(--serif); letter-spacing: -.03em; }
+    #preview h1 { font-size: 27px; }
+    #preview h2 { font-size: 23px; }
+    #preview h3 { font-size: 19px; }
+    #preview p { margin: 0 0 10px; }
+    #preview ul, #preview ol { margin: 0 0 10px; padding-left: 22px; }
+    #preview blockquote { margin: 0 0 10px; padding-left: 12px; border-left: 3px solid var(--yellow); color: var(--muted); }
+    #preview pre { margin: 0 0 10px; padding: 10px; border-radius: 5px; background: #eef0e9; overflow-x: auto; }
+    #preview code { padding: 2px 4px; border-radius: 3px; background: #eef0e9; font-size: .9em; }
+    #preview pre code { padding: 0; background: none; }
+    #preview a { color: var(--green); }
+    .playground-tip { margin: 12px 0 0; color: #aeb9af; font-size: 11px; }
+
+    .quiz {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 24px;
+      margin: 0 0 90px;
+      padding: 26px 28px;
+      border: 1px solid #e3ddc9;
+      border-radius: 10px;
+      background: #f5f0df;
+    }
+    .quiz .section-kicker { color: #8b7132; }
+    .quiz h2 { margin-bottom: 6px; font-size: 28px; }
+    .quiz p { margin: 0; color: #777363; font-size: 12px; }
+    .quiz-controls { display: flex; align-items: center; gap: 13px; }
+    .quiz select { min-height: 40px; max-width: 235px; padding: 0 10px; border: 1px solid #ddd5bc; border-radius: 5px; color: var(--ink); background: #fffdf5; font-size: 12px; }
+    .quiz .button { min-height: 40px; border-color: #79642d; background: #79642d; }
+    #quiz-result { grid-column: 1 / -1; min-height: 18px; color: #6b5a2c; font-size: 12px; font-weight: 650; }
+
+    footer { display: flex; justify-content: space-between; gap: 20px; padding: 22px max(5vw, 24px); border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+    footer strong { color: var(--ink); }
+
+    @media (max-width: 800px) {
+      .hero { grid-template-columns: 1fr 285px; gap: 30px; padding: 66px 0; }
+      .lesson-layout { grid-template-columns: 155px minmax(0, 1fr); gap: 32px; }
+      .lesson { grid-template-columns: 1fr; }
+      .example { border-top: 1px solid var(--line); border-left: 0; }
+    }
+    @media (max-width: 620px) {
+      .topbar { height: 62px; }
+      .topbar nav { gap: 15px; }
+      .topbar nav a { font-size: 11px; }
+      .top-note { display: none; }
+      main { padding: 0 20px; }
+      .hero { grid-template-columns: 1fr; gap: 34px; padding: 58px 0; }
+      .hero-card { max-width: 420px; width: calc(100% - 10px); margin: 0 auto 6px; }
+      .lesson-layout { grid-template-columns: 1fr; gap: 24px; padding: 48px 0 62px; }
+      .sidebar { position: static; display: flex; gap: 4px; overflow-x: auto; padding-bottom: 5px; }
+      .sidebar-title { display: none; }
+      .sidebar a { flex: 0 0 auto; padding: 8px 9px; border: 0; border-bottom: 2px solid transparent; font-size: 11px; }
+      .sidebar a:hover, .sidebar a.active { border-bottom-color: var(--green); border-left-color: transparent; }
+      h2 { font-size: 34px; }
+      .example > div { padding: 13px 12px; }
+      .playground { padding: 20px 15px; margin-bottom: 60px; }
+      .playground-grid { grid-template-columns: 1fr; }
+      .editor-wrap { border-right: 0; border-bottom: 1px solid #445148; }
+      #markdown-input { min-height: 170px; }
+      #preview { min-height: 155px; }
+      .quiz { grid-template-columns: 1fr; padding: 22px 19px; margin-bottom: 60px; }
+      .quiz-controls { align-items: stretch; flex-direction: column; }
+      .quiz select { max-width: none; }
+      footer { flex-direction: column; padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Markdown, remembered home"><span class="brand-mark">M↓</span> markdown, remembered</a>
+    <nav aria-label="Main navigation">
+      <a href="#guide">The basics</a>
+      <a href="#practice">Practice</a>
+      <a href="#quiz">Quick check</a>
+    </nav>
+    <span class="top-note">A field guide for your next blank page</span>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <div class="eyebrow">A tiny guide to Markdown</div>
+        <h1 id="page-title">Write clearly.<br><em>Remember</em> how.</h1>
+        <p class="hero-copy">Markdown is plain text with a few memorable marks. Learn the handful of patterns that turn notes into tidy, readable pages—no toolbar required.</p>
+        <div class="hero-actions">
+          <a class="button" href="#guide">Start with the basics <span aria-hidden="true">↓</span></a>
+          <a class="text-link" href="#practice">Or try it out →</a>
+        </div>
+      </div>
+      <div class="hero-card" aria-label="Markdown example">
+        <div class="card-label">A note, in Markdown</div>
+        <pre><span class="hash">#</span> Field notes
+
+The small things are
+<span class="strong">worth noticing.</span>
+
+- look closer
+- write it down
+
+<span class="dim">`keep it simple`</span></pre>
+      </div>
+    </section>
+
+    <div class="rule"></div>
+
+    <section class="lesson-layout" id="guide" aria-labelledby="guide-title">
+      <nav class="sidebar" aria-label="Markdown topics">
+        <div class="sidebar-title">In this guide</div>
+        <a class="active" href="#headings">Headings</a>
+        <a href="#emphasis">Emphasis</a>
+        <a href="#lists">Lists</a>
+        <a href="#links">Links</a>
+        <a href="#quotes">Quotes &amp; code</a>
+        <a href="#more">A few more</a>
+      </nav>
+
+      <div class="content">
+        <div class="section-heading">
+          <div class="section-kicker">01 / The essentials</div>
+          <h2 id="guide-title">The little marks<br>that do a lot.</h2>
+          <p>Markdown uses punctuation you already know. On the left is what you type; on the right is what readers see.</p>
+        </div>
+
+        <article class="lesson" id="headings">
+          <div class="lesson-info">
+            <div class="lesson-title"><span class="lesson-num">01</span><h3>Headings</h3></div>
+            <p>Start a line with <code>#</code>. More hashes make a smaller heading. Keep one main <code>#</code> heading per page.</p>
+          </div>
+          <div class="example">
+            <div><div class="example-label">You write</div><div class="code-sample">## A section</div></div>
+            <div><div class="example-label">It becomes</div><div class="rendered"><h4>A section</h4></div></div>
+          </div>
+        </article>
+
+        <article class="lesson" id="emphasis">
+          <div class="lesson-info">
+            <div class="lesson-title"><span class="lesson-num">02</span><h3>Emphasis</h3></div>
+            <p>Wrap a word in one asterisk for italics, or two for bold. Put the marks right next to the words.</p>
+          </div>
+          <div class="example">
+            <div><div class="example-label">You write</div><div class="code-sample">*gentle* **reminder**</div></div>
+            <div><div class="example-label">It becomes</div><div class="rendered"><em>gentle</em> <strong>reminder</strong></div></div>
+          </div>
+        </article>
+
+        <article class="lesson" id="lists">
+          <div class="lesson-info">
+            <div class="lesson-title"><span class="lesson-num">03</span><h3>Lists</h3></div>
+            <p>Use <code>-</code> for a bullet list, or a number and a period for steps. Leave a space after the marker.</p>
+          </div>
+          <div class="example">
+            <div><div class="example-label">You write</div><div class="code-sample">- notice<br>- collect<br>- share</div></div>
+            <div><div class="example-label">It becomes</div><div class="rendered"><ul><li>notice</li><li>collect</li><li>share</li></ul></div></div>
+          </div>
+        </article>
+
+        <article class="lesson" id="links">
+          <div class="lesson-info">
+            <div class="lesson-title"><span class="lesson-num">04</span><h3>Links</h3></div>
+            <p>Put the readable label in square brackets, then the web address in parentheses. Images work similarly, with <code>!</code> in front.</p>
+          </div>
+          <div class="example">
+            <div><div class="example-label">You write</div><div class="code-sample">[A helpful guide](https://example.com)</div></div>
+            <div><div class="example-label">It becomes</div><div class="rendered"><a href="https://example.com">A helpful guide</a></div></div>
+          </div>
+        </article>
+
+        <article class="lesson" id="quotes">
+          <div class="lesson-info">
+            <div class="lesson-title"><span class="lesson-num">05</span><h3>Quotes &amp; code</h3></div>
+            <p>Begin a quote with <code>&gt;</code>. Use backticks for a short code word, or three backticks on their own lines for a code block.</p>
+          </div>
+          <div class="example">
+            <div><div class="example-label">You write</div><div class="code-sample">&gt; Keep it simple.<br><br>`print("hi")`</div></div>
+            <div><div class="example-label">It becomes</div><div class="rendered"><blockquote>Keep it simple.</blockquote><code>print("hi")</code></div></div>
+          </div>
+        </article>
+
+        <article class="lesson" id="more">
+          <div class="lesson-info">
+            <div class="lesson-title"><span class="lesson-num">06</span><h3>Line breaks &amp; dividers</h3></div>
+            <p>Leave a blank line between paragraphs. Three hyphens on a line make a horizontal divider.</p>
+          </div>
+          <div class="example">
+            <div><div class="example-label">You write</div><div class="code-sample">A first thought.<br><br>---<br><br>A fresh start.</div></div>
+            <div><div class="example-label">It becomes</div><div class="rendered">A first thought.<hr>A fresh start.</div></div>
+          </div>
+        </article>
+
+        <section class="playground" id="practice" aria-labelledby="practice-title">
+          <div class="playground-head">
+            <div>
+              <div class="section-kicker">02 / A little practice</div>
+              <h2 id="practice-title">See it as you write.</h2>
+              <p>Change the Markdown on the left. Your preview updates as you type.</p>
+            </div>
+            <button class="reset-button" id="reset" type="button">Reset example ↺</button>
+          </div>
+          <div class="playground-grid">
+            <div class="editor-wrap">
+              <label class="pane-label" for="markdown-input">Markdown</label>
+              <textarea id="markdown-input" spellcheck="false" aria-label="Markdown editor"># Small observations
+
+The everyday can be **remarkable**.
+
+- Notice one detail
+- Write it *down*
+
+> Start where you are.</textarea>
+            </div>
+            <div class="preview-wrap">
+              <div class="pane-label">Preview</div>
+              <div id="preview" aria-live="polite"></div>
+            </div>
+          </div>
+          <p class="playground-tip">Try a heading with <code>#</code>, emphasis with <code>**bold**</code>, or a list with <code>-</code>.</p>
+        </section>
+
+        <section class="quiz" id="quiz" aria-labelledby="quiz-title">
+          <div>
+            <div class="section-kicker">03 / Quick check</div>
+            <h2 id="quiz-title">One last thing to remember.</h2>
+            <p>Which Markdown makes a level-two heading?</p>
+          </div>
+          <div class="quiz-controls">
+            <label class="visually-hidden" for="answer">Choose an answer</label>
+            <select id="answer">
+              <option value="">Choose an answer…</option>
+              <option value="one"># My heading</option>
+              <option value="two">## My heading</option>
+              <option value="three">**My heading**</option>
+            </select>
+            <button class="button" id="check-answer" type="button">Check it</button>
+          </div>
+          <div id="quiz-result" role="status" aria-live="polite"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span><strong>markdown, remembered</strong> · A small field guide for everyday writing.</span>
+    <span>Plain text in. Clear thoughts out.</span>
+  </footer>
+
+  <style>
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+  <script>
+    const editor = document.querySelector("#markdown-input");
+    const preview = document.querySelector("#preview");
+    const starterText = editor.value;
+
+    function escapeHtml(value) {
+      return value.replace(/[&<>"']/g, (character) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[character]);
+    }
+
+    function renderInline(value) {
+      let html = escapeHtml(value);
+      html = html.replace(/`([^`]+)`/g, "<code>$1</code>");
+      html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+      html = html.replace(/\*([^*]+)\*/g, "<em>$1</em>");
+      html = html.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+      return html;
+    }
+
+    function renderMarkdown(markdown) {
+      const lines = markdown.split(/\r?\n/);
+      const output = [];
+      let listType = "";
+      let inCode = false;
+      let codeLines = [];
+
+      function closeList() {
+        if (listType) {
+          output.push(`</${listType}>`);
+          listType = "";
+        }
+      }
+
+      for (const line of lines) {
+        if (/^\s*```/.test(line)) {
+          closeList();
+          if (inCode) {
+            output.push(`<pre><code>${escapeHtml(codeLines.join("\n"))}</code></pre>`);
+            codeLines = [];
+            inCode = false;
+          } else {
+            inCode = true;
+          }
+          continue;
+        }
+        if (inCode) {
+          codeLines.push(line);
+          continue;
+        }
+        const heading = line.match(/^(#{1,3})\s+(.+)$/);
+        const unorderedItem = line.match(/^\s*[-*+]\s+(.+)$/);
+        const orderedItem = line.match(/^\s*\d+\.\s+(.+)$/);
+        if (heading) {
+          closeList();
+          const level = heading[1].length;
+          output.push(`<h${level}>${renderInline(heading[2])}</h${level}>`);
+        } else if (unorderedItem || orderedItem) {
+          const nextType = unorderedItem ? "ul" : "ol";
+          if (listType !== nextType) {
+            closeList();
+            output.push(`<${nextType}>`);
+            listType = nextType;
+          }
+          output.push(`<li>${renderInline((unorderedItem || orderedItem)[1])}</li>`);
+        } else if (/^\s*>\s?/.test(line)) {
+          closeList();
+          output.push(`<blockquote>${renderInline(line.replace(/^\s*>\s?/, ""))}</blockquote>`);
+        } else if (/^\s*([-*_])\s*\1\s*\1\s*$/.test(line)) {
+          closeList();
+          output.push("<hr>");
+        } else if (line.trim()) {
+          closeList();
+          output.push(`<p>${renderInline(line)}</p>`);
+        } else {
+          closeList();
+        }
+      }
+      closeList();
+      if (inCode) output.push(`<pre><code>${escapeHtml(codeLines.join("\n"))}</code></pre>`);
+      preview.innerHTML = output.join("\n");
+    }
+
+    editor.addEventListener("input", () => renderMarkdown(editor.value));
+    document.querySelector("#reset").addEventListener("click", () => {
+      editor.value = starterText;
+      renderMarkdown(editor.value);
+      editor.focus();
+    });
+    document.querySelector("#check-answer").addEventListener("click", () => {
+      const result = document.querySelector("#quiz-result");
+      const answer = document.querySelector("#answer").value;
+      result.textContent = answer === "two"
+        ? "That's right — two hashes make a level-two heading."
+        : answer
+          ? "Not quite. A single # is the main heading; two ## make the next level."
+          : "Choose an answer first, then check again.";
+    });
+
+    renderMarkdown(editor.value);
+
+    const topicLinks = [...document.querySelectorAll(".sidebar a")];
+    const topicObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          topicLinks.forEach((link) => {
+            link.classList.toggle("active", link.hash === `#${entry.target.id}`);
+          });
+        }
+      }
+    }, { rootMargin: "-15% 0px -70% 0px" });
+    topicLinks.forEach((link) => {
+      const section = document.querySelector(link.hash);
+      if (section) topicObserver.observe(section);
+    });
+  </script>
+</body>
+</html>
